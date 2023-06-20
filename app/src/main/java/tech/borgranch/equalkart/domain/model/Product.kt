@@ -10,9 +10,11 @@ data class Product(
         }
     }
     fun editName(name: String): Product {
+        require(name.isNotBlank()) { "Name must not be blank" }
         return Product(name, price)
     }
     fun editPrice(price: Double): Product {
+        require(price >= 0.0) { "Price must be non-negative" }
         return Product(name, price)
     }
 }
