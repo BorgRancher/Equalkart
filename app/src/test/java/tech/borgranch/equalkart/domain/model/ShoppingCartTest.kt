@@ -9,13 +9,13 @@ import org.junit.Test
 internal class ShoppingCartTest {
 
     private val sut = ShoppingCart()
-    private val cornflakes = Product(1, "Cornflakes", 2.99, "A box of cornflakes", "cornflakes.jpg")
-    private val milk = Product(2, "Milk", 1.29, "A bottle of milk", "milk.jpg")
-    private val bread = Product(3, "Bread", 1.99, "A loaf of bread", "bread.jpg")
-    private val eggs = Product(4, "Eggs", 2.99, "A dozen eggs", "eggs.jpg")
-    private val butter = Product(5, "Butter", 1.99, "A stick of butter", "butter.jpg")
-    private val cheese = Product(6, "Cheese", 2.99, "A block of cheese", "cheese.jpg")
-    private val ham = Product(7, "Ham", 3.99, "A packet of ham", "ham.jpg")
+    private val cornflakes = Product("Cornflakes", 2.99)
+    private val milk = Product("Milk", 1.29)
+    private val bread = Product("Bread", 1.99)
+    private val eggs = Product("Eggs", 2.99)
+    private val butter = Product("Butter", 1.99)
+    private val cheese = Product("Cheese", 2.99)
+    private val ham = Product("Ham", 3.99)
 
     @Before
     fun setUp() {
@@ -28,7 +28,7 @@ internal class ShoppingCartTest {
     }
 
     @Test
-    fun addItem() {
+    fun `items can be added to the cart`() {
         val testAddCart = sut
             .addItem(cornflakes, 1)
             .addItem(milk, 1)
@@ -38,12 +38,12 @@ internal class ShoppingCartTest {
             .addItem(cheese, 1)
             .addItem(ham, 2)
 
-        assertEquals("8", testAddCart.getItemCount().toString())
+        assertEquals(8, testAddCart.getItemCount())
         assertEquals(22.22, testAddCart.subtotal, 0.0)
     }
 
     @Test
-    fun removeItem() {
+    fun `items can be removed from the cart`() {
         val testRemoveCart = sut
             .addItem(cornflakes, 1)
             .addItem(milk, 1)
@@ -56,11 +56,11 @@ internal class ShoppingCartTest {
 
         assertTrue("Shopping cart should contain 6 items", testRemoveCart.getItemCount() == 6)
         assertEquals(14.24, testRemoveCart.subtotal, 0.0)
-        assertEquals("Tax should be 2.99", 2.99, testRemoveCart.tax, 0.0)
+        assertEquals("Tax should be 1.78", 1.78, testRemoveCart.tax, 0.0)
     }
 
     @Test
-    fun empty() {
+    fun `the cart can be emptied`() {
         val testEmptyCart = sut
             .addItem(cornflakes, 1)
             .addItem(milk, 1)
@@ -75,7 +75,7 @@ internal class ShoppingCartTest {
     }
 
     @Test
-    fun getSubtotal() {
+    fun `we can calculate the sub-total correctly`() {
         val testSubtotalCart = sut
             .empty()
             .addItem(cornflakes, 1)
@@ -90,7 +90,7 @@ internal class ShoppingCartTest {
     }
 
     @Test
-    fun getTax() {
+    fun `taxes are calculated correctly`() {
         val testTaxCart = sut
             .empty()
             .addItem(cornflakes, 1)
@@ -102,11 +102,11 @@ internal class ShoppingCartTest {
             .addItem(cheese, 1)
             .addItem(ham, 1)
 
-        assertEquals(4.25, testTaxCart.tax, 0.0)
+        assertEquals(2.53, testTaxCart.tax, 0.0)
     }
 
     @Test
-    fun getTotal() {
+    fun `the grand total is calculated correctly`() {
         val testTotalCart = sut.addItem(cornflakes, 1)
             .addItem(milk, 1)
             .addItem(bread, 1)
@@ -116,6 +116,20 @@ internal class ShoppingCartTest {
             .addItem(cheese, 1)
             .addItem(ham, 1)
 
-        assertEquals(testTotalCart.total, 24.47, 0.0)
+        assertEquals(
+            "The total for this shopping cart should be 22.75",
+            22.75,
+            testTotalCart.total,
+            0.0,
+        )
+    }
+
+    @Test
+    fun `removing a non-existent item from the cart should not affect the calculations`() {
+        val testRemoveNonExistentCart = sut.removeItem(milk, 999)
+            .addItem(eggs, 2)
+            .removeItem(bread, 88888)
+
+        assertEquals(2, testRemoveNonExistentCart.getItemCount())
     }
 }
