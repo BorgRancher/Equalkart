@@ -1,13 +1,13 @@
 package tech.borgranch.equalkart.data.local.dao
 
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import tech.borgranch.equalkart.data.local.dto.CachedProduct
-import androidx.room.Insert as Insert
 
 @Dao
-interface ProductDao {
+interface CachedProductsDao {
     @Insert
     fun insertAll(vararg products: CachedProduct)
 
