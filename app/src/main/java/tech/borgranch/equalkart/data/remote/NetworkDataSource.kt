@@ -1,15 +1,12 @@
 package tech.borgranch.equalkart.data.remote
 
-class NetworkDataSource(
-    private val productApi: ProductApi,
-) {
+import tech.borgranch.equalkart.data.remote.responses.RemoteProduct
 
-    suspend fun getProduct(productName: String): RemoteResult<String> {
-        return try {
-            val response = productApi.getProduct(productName)
-            RemoteResult.Success(data = response.name)
-        } catch (e: Exception) {
-            RemoteResult.NetworkError(message = e.message ?: "Unknown error")
-        }
+class NetworkDataSource(
+    private val productApi: EqualPricingApi = EqualPricingApiService.getInstance().retrofitService,
+) : BaseNetworkDataSource() {
+
+    suspend fun getProduct(productName: String): EqualResult<RemoteProduct> {
+        return safeApiCall { productApi.getProduct(productName) }
     }
 }
