@@ -1,12 +1,14 @@
 package tech.borgranch.equalkart.domain.model
 
-import java.util.Locale
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * A shopping cart is a collection of items, each with a product and a quantity.
  */
 data class ShoppingCart(
-    private val items: List<ShoppingCartItem> = emptyList(),
+    private val items: ConcurrentHashMap<String, ShoppingCartItem> = ConcurrentHashMap(),
     val subtotal: Double = 0.0,
     val tax: Double = 0.0,
     val total: Double = 0.0,
@@ -24,25 +26,31 @@ data class ShoppingCart(
     fun addItem(product: Product, quantity: Int = 1): ShoppingCart {
         // for an empty cart, only add items if quantity is positive
         if (this.isEmpty && quantity > 0) {
-            return ShoppingCart(listOf(ShoppingCartItem(product, quantity)), subtotal, tax, total).calculate()
+            items[product.name] = ShoppingCartItem(product, quantity)
+            return ShoppingCart(
+                items = items,
+                subtotal = subtotal,
+                tax = tax,
+                total = total,
+            ).calculate()
         }
 
         // for a non-empty cart, add items if quantity is positive, remove if negative
-        val newItems = items.toMutableList()
-        val item = newItems.find { it.product == product }
+        val item = items.entries.firstOrNull { product.name == it.key }
         when {
             item != null -> {
-                newItems.remove(item)
-                if (item.quantity + quantity > 0) {
-                    newItems.add(item.editQuantity(item.quantity + quantity))
+                if ((item.value.quantity + quantity) >= 1) {
+                    items[product.name] = item.value.editQuantity(item.value.quantity + quantity)
+                } else {
+                    items.remove(product.name)
                 }
             }
             quantity > 0 -> {
-                newItems.add(ShoppingCartItem(product, quantity))
+                items[product.name] = ShoppingCartItem(product, quantity)
             }
         }
         // return a new cart with the updated items
-        return ShoppingCart(newItems, subtotal, tax, total).calculate()
+        return ShoppingCart(items, subtotal, tax, total).calculate()
     }
 
     /**
@@ -50,6 +58,7 @@ data class ShoppingCart(
      * If the item does not exist, nothing happens.
      * If the item exists and the quantity is positive, the quantity is updated.
      */
+    @Synchronized
     fun removeItem(product: Product, quantity: Int = Int.MIN_VALUE): ShoppingCart {
         if (quantity == Int.MIN_VALUE) {
             return (addItem(product, quantity))
@@ -64,24 +73,24 @@ data class ShoppingCart(
      */
     @Synchronized
     fun empty(): ShoppingCart {
-        return ShoppingCart(emptyList(), 0.0, 0.0, 0.0)
+        return ShoppingCart(ConcurrentHashMap<String, ShoppingCartItem>(), 0.0, 0.0, 0.0)
     }
 
     private fun calculateTax(): ShoppingCart {
-        return ShoppingCart(items, subtotal, currencyFormat(subtotal * taxPercentage), total)
+        return ShoppingCart(items, subtotal, (subtotal * taxPercentage).roundToCurrency(), total)
     }
 
     private fun calculateSubtotal(): ShoppingCart {
         return ShoppingCart(
             items,
-            currencyFormat(items.sumOf { it.product.price * it.quantity }),
+            items.values.sumOf { it.product.price * it.quantity }.roundToCurrency(),
             tax,
             total,
         )
     }
 
     private fun calculateTotal(): ShoppingCart {
-        return ShoppingCart(items, subtotal, tax, currencyFormat(subtotal + tax))
+        return ShoppingCart(items, subtotal, tax, (subtotal + tax).roundToCurrency())
     }
 
     @Synchronized
@@ -102,18 +111,14 @@ data class ShoppingCart(
      * @param product The product to get the quantity of.
      * @return The quantity of the product in the cart, or zero if the product does not exist.
      */
+    @Synchronized
     fun getItemCount(product: Product? = null): Int {
         if (product == null) {
-            return items.sumOf { it.quantity }
+            return items.values.sumOf { it.quantity }
         }
-        return items.find { it.product == product }?.quantity ?: 0
+        return items.values.find { it.product == product }?.quantity ?: 0
     }
 
-    private fun currencyFormat(value: Double): Double {
-        return String.format(
-            Locale.getDefault(),
-            "%.2f",
-            value,
-        ).replace(",", ".").toDouble()
-    }
+    private fun Double.roundToCurrency() =
+        BigDecimal(this).setScale(2, RoundingMode.HALF_UP).toDouble()
 }

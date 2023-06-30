@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package tech.borgranch.equalkart.data.local.dao
 
 import androidx.room.Dao
@@ -24,10 +26,10 @@ interface CachedProductsDao {
     fun getAll(): List<CachedProduct>
 
     @Query("SELECT * FROM products WHERE id = :id")
-    fun getById(id: Int): CachedProduct
+    fun getById(id: Int): CachedProduct?
 
     @Query("SELECT * FROM products WHERE name LIKE :name")
-    fun getByName(name: String): List<CachedProduct>
+    suspend fun getByName(name: String): List<CachedProduct>
 
     @Query("SELECT * FROM products WHERE description LIKE :description")
     fun getByDescription(description: String): List<CachedProduct>
@@ -54,4 +56,7 @@ interface CachedProductsDao {
         maxPrice: Double,
         inStock: Boolean,
     ): List<CachedProduct>
+
+    @Query("DELETE FROM products")
+    fun deleteAll()
 }
