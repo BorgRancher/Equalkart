@@ -19,12 +19,16 @@ import androidx.room.PrimaryKey
             onDelete = androidx.room.ForeignKey.CASCADE,
         ),
     ],
+    indices = [
+        androidx.room.Index(value = ["orderId"], unique = false),
+        androidx.room.Index(value = ["productId"], unique = false),
+    ],
 )
 data class OrderItem(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
-    val orderId: Int,
-    val productId: Int,
+    val id: Long,
+    val orderId: Long,
+    val productId: Long,
     val quantity: Int,
     val price: Double,
 )

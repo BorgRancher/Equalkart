@@ -6,10 +6,11 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "orders")
 data class Order(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Long,
     val userId: Int,
     val status: String,
-    val createdAt: String,
-    val updatedAt: String,
-    val items: List<OrderItem>,
+    val createdAt: Long,
+    val updatedAt: Long,
+    val discountPercent: Double,
+    val taxPercent: Double,
 )

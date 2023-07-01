@@ -4,11 +4,12 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import tech.borgranch.equalkart.data.local.ProductsMetaCache
 import tech.borgranch.equalkart.data.remote.responses.RemoteProduct
+import tech.borgranch.equalkart.utility.toSnakeCase
 
 @Entity(tableName = "products")
 data class CachedProduct(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Long = 0,
     val sku: String = "",
     val name: String = "",
     val description: String = "",
@@ -16,6 +17,7 @@ data class CachedProduct(
     val image: String = "",
     val inStock: Boolean = false,
 ) {
+    val searchTerm get() = name.toSnakeCase()
     companion object {
         fun fromRemoteProduct(remoteProduct: RemoteProduct): CachedProduct {
             val productMeta = ProductsMetaCache.getProductMeta(remoteProduct.name)

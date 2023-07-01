@@ -119,6 +119,15 @@ data class ShoppingCart(
         return items.values.find { it.product == product }?.quantity ?: 0
     }
 
+    /**
+     * Get the items in the cart.
+     * @return A list of the items in the cart.
+     */
+    @Synchronized
+    fun getItems(): List<ShoppingCartItem> {
+        return items.values.toList()
+    }
+
     private fun Double.roundToCurrency() =
         BigDecimal(this).setScale(2, RoundingMode.HALF_UP).toDouble()
 }

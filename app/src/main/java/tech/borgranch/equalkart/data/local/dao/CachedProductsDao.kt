@@ -14,7 +14,7 @@ interface CachedProductsDao {
     fun insertAll(vararg products: CachedProduct)
 
     @Insert
-    fun insert(product: CachedProduct)
+    fun insert(product: CachedProduct): Long
 
     @Update
     fun update(product: CachedProduct)

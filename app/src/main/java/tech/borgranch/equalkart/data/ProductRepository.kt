@@ -15,11 +15,11 @@ class ProductRepository(
         return if (cachedProduct != null) {
             EqualResult.Success(cachedProduct)
         } else {
-            return fetchAndInsertRemoteProducts(productName)
+            return fetchAndInsertRemoteProduct(productName)
         }
     }
 
-    private suspend fun fetchAndInsertRemoteProducts(productName: String): EqualResult<CachedProduct> {
+    private suspend fun fetchAndInsertRemoteProduct(productName: String): EqualResult<CachedProduct> {
         return when (val productResponse = networkDataSource.getProduct(productName)) {
             is EqualResult.Success -> {
                 val product = CachedProduct.fromRemoteProduct(productResponse.data!!)
