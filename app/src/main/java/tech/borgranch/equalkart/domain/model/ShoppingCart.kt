@@ -1,7 +1,6 @@
 package tech.borgranch.equalkart.domain.model
 
-import java.math.BigDecimal
-import java.math.RoundingMode
+import tech.borgranch.equalkart.utility.roundToCurrency
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -15,6 +14,12 @@ data class ShoppingCart(
     val isEmpty: Boolean = items.isEmpty(),
     val taxPercentage: Double = 0.125,
 ) {
+    /**
+     *
+     */
+    val effectiveTaxPercentage: Double
+        get() = taxPercentage.roundToCurrency()
+
     /**
      * Add an item to the cart.
      * If the item does not exist and the quantity is positive, it is added.
@@ -77,7 +82,12 @@ data class ShoppingCart(
     }
 
     private fun calculateTax(): ShoppingCart {
-        return ShoppingCart(items, subtotal, (subtotal * taxPercentage).roundToCurrency(), total)
+        return ShoppingCart(
+            items,
+            subtotal,
+            (subtotal * effectiveTaxPercentage).roundToCurrency(),
+            total,
+        )
     }
 
     private fun calculateSubtotal(): ShoppingCart {
@@ -127,7 +137,4 @@ data class ShoppingCart(
     fun getItems(): List<ShoppingCartItem> {
         return items.values.toList()
     }
-
-    private fun Double.roundToCurrency() =
-        BigDecimal(this).setScale(2, RoundingMode.HALF_UP).toDouble()
 }

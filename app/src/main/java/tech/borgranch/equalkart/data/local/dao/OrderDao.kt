@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package tech.borgranch.equalkart.data.local.dao
 
 import androidx.room.Dao

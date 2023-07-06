@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package tech.borgranch.equalkart.data
 
 import tech.borgranch.equalkart.data.local.LocalDataSource

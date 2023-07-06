@@ -6,6 +6,7 @@ plugins {
     id "io.gitlab.arturbosch.detekt" version "1.22.0" apply true
     id "org.jmailen.kotlinter" version "3.14.0"
     id 'com.google.devtools.ksp' version '1.8.10-1.0.9' apply false
+    id "org.jetbrains.kotlinx.kover" version "0.6.1" apply true
 }
 
 detekt {
@@ -15,6 +16,19 @@ detekt {
     // point to your custom config defining rules to run, overwriting default behavior
     baseline = file("$projectDir/config/baseline.xml")
     // a way of suppressing issues before introducing detekt
+}
+subprojects {
+    kover {
+        verify {
+            rule {
+                enabled = true
+                name = "Coverage must be more than 60%"
+                bound {
+                    minValue = 60
+                }
+            }
+        }
+    }
 }
 
 allprojects {
