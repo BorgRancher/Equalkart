@@ -1,5 +1,6 @@
 package tech.borgranch.equalkart.domain.model
 
+import tech.borgranch.equalkart.R
 import tech.borgranch.equalkart.data.local.dto.CachedProduct
 import tech.borgranch.equalkart.utility.capitalizeWords
 
@@ -10,7 +11,9 @@ data class Product(
     val price: Double = 0.0,
     val image: String = "",
     val inStock: Boolean = false,
+    val imageResId: Int = R.drawable.product_image_placeholder,
 ) {
+
     companion object {
         fun empty(): Product {
             return Product("", "", "", 0.0, "", false)
