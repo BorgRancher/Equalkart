@@ -8,11 +8,15 @@ fun String.toSnakeCase(): String {
     return this.trim().lowercase().replace(" ", "_")
 }
 
+fun String.fromSnakeCase(): String {
+    return this.trim().lowercase().replace("_", " ")
+}
+
 fun Double.roundToCurrency(decimals: Int = 2): Double {
     return BigDecimal(this).setScale(decimals, RoundingMode.HALF_UP).toDouble()
 }
 
-fun String.capitalizeWords(): String = split(" ").joinToString(" ") {
+fun String.capitalizeWords(): String = fromSnakeCase().split(" ").joinToString(" ") {
     it.lowercase().replaceFirstChar { e ->
         e.uppercase(
             Locale.getDefault(),

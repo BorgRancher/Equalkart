@@ -16,7 +16,7 @@ class ExtensionsTest {
     }
 
     @Test
-    fun `it should capitalize words for product descriptions`() {
+    fun `it should capitalize words for product names`() {
         assertEquals("Hello World", "hello world".capitalizeWords())
     }
 }
