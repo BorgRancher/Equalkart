@@ -11,6 +11,7 @@ import tech.borgranch.equalkart.data.local.LocalDataSource
 import tech.borgranch.equalkart.data.remote.NetworkDataSource
 import tech.borgranch.equalkart.domain.model.Product
 import tech.borgranch.equalkart.domain.model.ShoppingCart
+import tech.borgranch.equalkart.utility.toSnakeCase
 
 class ShoppingCartRepositoryTest {
 
@@ -22,6 +23,9 @@ class ShoppingCartRepositoryTest {
 
     private lateinit var shoppingCartRepository: ShoppingCartRepository
 
+    private val product =
+        Product("Example Product".toSnakeCase(), "Example Product", "An example description", 10.0)
+
     @Before
     fun setup() {
         MockitoAnnotations.openMocks(this)
@@ -30,10 +34,8 @@ class ShoppingCartRepositoryTest {
 
     @Test
     fun `addItem should add item to the shopping cart`() {
-        val product = Product("Example Product", 10.0)
-        val initialQuantity = 2
+        val initialQuantity = 5
         val addedQuantity = 3
-        initialQuantity + addedQuantity
 
         val initialShoppingCart =
             ShoppingCart().addItem(product, initialQuantity).addItem(product, addedQuantity)
@@ -45,7 +47,6 @@ class ShoppingCartRepositoryTest {
 
     @Test
     fun `removeItem should remove item from the shopping cart`() {
-        val product = Product("Example Product", 10.0)
         val initialQuantity = 5
         val removedQuantity = 2
 
@@ -59,18 +60,16 @@ class ShoppingCartRepositoryTest {
 
     @Test
     fun `clear should empty the shopping cart`() {
-        val product = Product("Example Product", 10.0)
         val quantity = 3
         val initialShoppingCart = ShoppingCart().addItem(product, quantity)
         shoppingCartRepository.addItem(product, quantity)
         assertEquals(initialShoppingCart, shoppingCartRepository.shoppingCart)
-        shoppingCartRepository.clear()
+        shoppingCartRepository.clearCart()
         assertEquals(ShoppingCart(), shoppingCartRepository.shoppingCart)
     }
 
     @Test
     fun `checkout should create an order and clear the shopping cart`() = runBlocking {
-        val product = Product("Example Product", 10.0)
         val quantity = 2
         val orderId = 10234L
 
@@ -78,7 +77,7 @@ class ShoppingCartRepositoryTest {
 
         `when`(localDataSource.createOrder(shoppingCartRepository.shoppingCart)).thenReturn(orderId)
 
-        shoppingCartRepository.checkout()
+        shoppingCartRepository.checkoutCart()
 
         assertEquals(ShoppingCart(), shoppingCartRepository.shoppingCart)
     }
