@@ -19,6 +19,22 @@ class ProductRepository(
         }
     }
 
+    suspend fun getProducts(): EqualResult<List<CachedProduct>> {
+        val cachedProducts = localDataSource.getCachedProducts()
+        return if (cachedProducts.isNotEmpty()) {
+            EqualResult.Success(cachedProducts)
+        } else {
+            val fetchAndInsertRemoteProducts = networkDataSource.getProducts()
+            if (fetchAndInsertRemoteProducts is EqualResult.Success) {
+                val newCachedProducts =
+                    fetchAndInsertRemoteProducts.data!!.map { CachedProduct.fromRemoteProduct(it) }
+                localDataSource.insertCachedProducts(newCachedProducts)
+                EqualResult.Success(newCachedProducts)
+            }
+            return EqualResult.Error(message = "No products found", data = emptyList())
+        }
+    }
+
     private suspend fun fetchAndInsertRemoteProduct(productName: String): EqualResult<CachedProduct> {
         return when (val productResponse = networkDataSource.getProduct(productName)) {
             is EqualResult.Success -> {

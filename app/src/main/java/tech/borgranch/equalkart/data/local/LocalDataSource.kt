@@ -55,4 +55,12 @@ class LocalDataSource(
 
         return orderId
     }
+
+    fun getCachedProducts(): List<CachedProduct> {
+        return cachedDb.cachedProductsDao().getAll()
+    }
+
+    fun insertCachedProducts(data: List<CachedProduct>): List<Long> {
+        return cachedDb.cachedProductsDao().insertAll(data)
+    }
 }

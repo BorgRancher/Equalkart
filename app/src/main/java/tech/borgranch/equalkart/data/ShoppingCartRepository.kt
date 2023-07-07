@@ -24,15 +24,15 @@ class ShoppingCartRepository(
         _shoppingCart = shoppingCart.removeItem(product, quantity)
     }
 
-    fun clear() {
+    fun clearCart() {
         _shoppingCart = _shoppingCart.empty()
     }
 
-    suspend fun checkout(): Long {
+    suspend fun checkoutCart(): Long {
         // Create order in database
         val orderId = localDataSource.createOrder(_shoppingCart)
         Timber.d("Created order with id $orderId")
-        clear()
+        clearCart()
         return orderId
     }
 }
