@@ -7,8 +7,9 @@ import tech.borgranch.equalkart.data.remote.NetworkDataSource
 import tech.borgranch.equalkart.domain.model.Product
 import tech.borgranch.equalkart.domain.model.ShoppingCart
 import timber.log.Timber
+import javax.inject.Inject
 
-class ShoppingCartRepository(
+class ShoppingCartRepository @Inject constructor(
     private val localDataSource: LocalDataSource,
     private val networkDataSource: NetworkDataSource,
 ) {

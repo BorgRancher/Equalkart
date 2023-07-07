@@ -4,8 +4,9 @@ import tech.borgranch.equalkart.data.local.LocalDataSource
 import tech.borgranch.equalkart.data.local.dto.CachedProduct
 import tech.borgranch.equalkart.data.remote.EqualResult
 import tech.borgranch.equalkart.data.remote.NetworkDataSource
+import javax.inject.Inject
 
-class ProductRepository(
+class ProductRepository @Inject constructor(
     private val networkDataSource: NetworkDataSource,
     private val localDataSource: LocalDataSource,
 ) {
