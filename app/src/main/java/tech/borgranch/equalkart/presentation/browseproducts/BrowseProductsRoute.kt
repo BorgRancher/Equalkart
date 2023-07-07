@@ -26,6 +26,10 @@ fun rememberBrowseProductsActions(coordinator: BrowseProductsCoordinator): Brows
     return remember(coordinator) {
         BrowseProductsActions(
             onProductClick = coordinator::showProductDetails,
+            onAddToCart = coordinator::onAddToCart,
+            onRemoveFromCart = coordinator::onRemoveFromCart,
+            onAbandonCart = coordinator::onAbandonCart,
+            onClearCart = coordinator::onAbandonCart,
         )
     }
 }

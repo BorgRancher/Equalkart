@@ -7,8 +7,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import tech.borgranch.equalkart.domain.model.Product
 import tech.borgranch.equalkart.domain.model.ShoppingCart
-import tech.borgranch.equalkart.domain.usecases.AddToCartUseCase
-import tech.borgranch.equalkart.domain.usecases.RemoveFromCartUseCase
 
 /**
  * UI State that represents BrowseProductsScreen
@@ -33,8 +31,10 @@ data class BrowseProductsActions(
     val onSearchQueryChanged: (String) -> Unit = {},
     val onSearch: (String) -> Unit = {},
     val onSearchDismiss: () -> Unit = {},
-    val onAddToCart: (AddToCartUseCase.Params) -> Unit = {},
-    val onRemoveFromCart: (RemoveFromCartUseCase.Params) -> Unit = {},
+    val onAddToCart: (String, Int) -> Unit = { s: String, i: Int -> },
+    val onRemoveFromCart: (String, Int) -> Unit = { s: String, i: Int -> },
+    val onAbandonCart: () -> Unit = {},
+    val onClearCart: () -> Unit = {},
     val onCheckout: () -> Unit = {},
 )
 

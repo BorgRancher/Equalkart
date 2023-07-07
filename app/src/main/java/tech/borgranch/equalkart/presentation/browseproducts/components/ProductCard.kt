@@ -21,8 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import tech.borgranch.equalkart.R
 import tech.borgranch.equalkart.domain.model.Product
-import tech.borgranch.equalkart.domain.usecases.AddToCartUseCase
-import tech.borgranch.equalkart.domain.usecases.RemoveFromCartUseCase
 import tech.borgranch.equalkart.presentation.browseproducts.BrowseProductsActions
 import tech.borgranch.equalkart.utility.roundToCurrency
 import java.text.DecimalFormat
@@ -63,17 +61,10 @@ fun ProductCard(product: Product, itemCount: Int = 0, actions: BrowseProductsAct
                     QuantityControl(
                         itemCount = itemCount,
                         onIncrease = {
-                            actions.onAddToCart(
-                                AddToCartUseCase.Params(
-                                    product = product,
-                                    quantity = 1,
-                                ),
-                            )
+                            actions.onAddToCart(product.name, 1)
                         },
                         onDecrease = {
-                            actions.onRemoveFromCart(
-                                RemoveFromCartUseCase.Params(product = product, quantity = 1),
-                            )
+                            actions.onRemoveFromCart(product.name, 1)
                         },
                     )
                 }
