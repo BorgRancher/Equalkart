@@ -6,8 +6,9 @@ import tech.borgranch.equalkart.data.local.dto.Order
 import tech.borgranch.equalkart.data.local.dto.OrderItem
 import tech.borgranch.equalkart.domain.model.ShoppingCart
 import tech.borgranch.equalkart.utility.toSnakeCase
+import javax.inject.Inject
 
-class LocalDataSource(
+class LocalDataSource @Inject constructor(
     private val cachedDb: CachedDb,
 ) {
 
@@ -54,5 +55,13 @@ class LocalDataSource(
         }
 
         return orderId
+    }
+
+    fun getCachedProducts(): List<CachedProduct> {
+        return cachedDb.cachedProductsDao().getAll()
+    }
+
+    fun insertCachedProducts(data: List<CachedProduct>): List<Long> {
+        return cachedDb.cachedProductsDao().insertAll(data)
     }
 }

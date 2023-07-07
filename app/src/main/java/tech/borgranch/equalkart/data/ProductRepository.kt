@@ -4,8 +4,9 @@ import tech.borgranch.equalkart.data.local.LocalDataSource
 import tech.borgranch.equalkart.data.local.dto.CachedProduct
 import tech.borgranch.equalkart.data.remote.EqualResult
 import tech.borgranch.equalkart.data.remote.NetworkDataSource
+import javax.inject.Inject
 
-class ProductRepository(
+class ProductRepository @Inject constructor(
     private val networkDataSource: NetworkDataSource,
     private val localDataSource: LocalDataSource,
 ) {
@@ -16,6 +17,22 @@ class ProductRepository(
             EqualResult.Success(cachedProduct)
         } else {
             return fetchAndInsertRemoteProduct(productName)
+        }
+    }
+
+    suspend fun getProducts(): EqualResult<List<CachedProduct>> {
+        val cachedProducts = localDataSource.getCachedProducts()
+        return if (cachedProducts.isNotEmpty()) {
+            EqualResult.Success(cachedProducts)
+        } else {
+            val fetchAndInsertRemoteProducts = networkDataSource.getProducts()
+            if (fetchAndInsertRemoteProducts is EqualResult.Success) {
+                val newCachedProducts =
+                    fetchAndInsertRemoteProducts.data!!.map { CachedProduct.fromRemoteProduct(it) }
+                localDataSource.insertCachedProducts(newCachedProducts)
+                EqualResult.Success(newCachedProducts)
+            }
+            return EqualResult.Error(message = "No products found", data = emptyList())
         }
     }
 

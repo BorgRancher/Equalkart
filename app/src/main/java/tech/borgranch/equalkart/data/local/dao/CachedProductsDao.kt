@@ -11,7 +11,7 @@ import tech.borgranch.equalkart.data.local.dto.CachedProduct
 @Dao
 interface CachedProductsDao {
     @Insert
-    fun insertAll(vararg products: CachedProduct)
+    fun insertAll(products: List<CachedProduct>): List<Long>
 
     @Insert
     fun insert(product: CachedProduct): Long

@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap
  * A shopping cart is a collection of items, each with a product and a quantity.
  */
 data class ShoppingCart(
-    private val items: ConcurrentHashMap<String, ShoppingCartItem> = ConcurrentHashMap(),
+    private val items: Map<String, ShoppingCartItem> = emptyMap(),
     val subtotal: Double = 0.0,
     val tax: Double = 0.0,
     val total: Double = 0.0,
@@ -30,10 +30,11 @@ data class ShoppingCart(
     @Synchronized
     fun addItem(product: Product, quantity: Int = 1): ShoppingCart {
         // for an empty cart, only add items if quantity is positive
+        val newItems = ConcurrentHashMap(items)
         if (this.isEmpty && quantity > 0) {
-            items[product.name] = ShoppingCartItem(product, quantity)
+            newItems[product.name] = ShoppingCartItem(product, quantity)
             return ShoppingCart(
-                items = items,
+                items = newItems.toMap(),
                 subtotal = subtotal,
                 tax = tax,
                 total = total,
@@ -41,21 +42,23 @@ data class ShoppingCart(
         }
 
         // for a non-empty cart, add items if quantity is positive, remove if negative
-        val item = items.entries.firstOrNull { product.name == it.key }
+        val newItem = newItems.entries.firstOrNull { product.name == it.key }
         when {
-            item != null -> {
-                if ((item.value.quantity + quantity) >= 1) {
-                    items[product.name] = item.value.editQuantity(item.value.quantity + quantity)
+            newItem != null -> {
+                if ((newItem.value.quantity + quantity) >= 1) {
+                    newItems[product.name] =
+                        newItem.value.editQuantity(newItem.value.quantity + quantity)
                 } else {
-                    items.remove(product.name)
+                    newItems.remove(product.name)
                 }
             }
+
             quantity > 0 -> {
-                items[product.name] = ShoppingCartItem(product, quantity)
+                newItems[product.name] = ShoppingCartItem(product, quantity)
             }
         }
         // return a new cart with the updated items
-        return ShoppingCart(items, subtotal, tax, total).calculate()
+        return ShoppingCart(newItems.toMap(), subtotal, tax, total).calculate()
     }
 
     /**
