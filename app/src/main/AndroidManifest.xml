@@ -12,6 +12,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:name=".EqualKartApp"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Equalkart"
@@ -26,19 +27,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            android:exported="false"
-            android:initOrder="100">
-            <meta-data
-                android:name="androidx.core.app.ComponentActivityInitializer"
-                android:value="androidx.lifecycle.ViewModelStore" />
-
-            <meta-data
-                android:name="androidx.hilt.components.HiltComponent"
-                android:value="androidx.hilt.lifecycle.HiltViewModelFactory" />
-        </provider>
     </application>
 
 </manifest>

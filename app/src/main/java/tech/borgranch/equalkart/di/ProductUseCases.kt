@@ -3,7 +3,8 @@ package tech.borgranch.equalkart.di
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
 import tech.borgranch.equalkart.data.ProductRepository
 import tech.borgranch.equalkart.data.ShoppingCartRepository
 import tech.borgranch.equalkart.data.local.LocalDataSource
@@ -12,13 +13,12 @@ import tech.borgranch.equalkart.domain.usecases.AbandonCartUseCase
 import tech.borgranch.equalkart.domain.usecases.AddToCartUseCase
 import tech.borgranch.equalkart.domain.usecases.GetAllProductsUseCase
 import tech.borgranch.equalkart.domain.usecases.RemoveFromCartUseCase
-import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 object ProductUseCases {
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideProductRepository(
         networkDataSource: NetworkDataSource,
         localDataSource: LocalDataSource,
@@ -27,7 +27,7 @@ object ProductUseCases {
     }
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideShoppingCartRepository(
         localDataSource: LocalDataSource,
         networkDataSource: NetworkDataSource,
@@ -36,6 +36,7 @@ object ProductUseCases {
     }
 
     @Provides
+    @ViewModelScoped
     fun provideGetAllProductsUseCase(
         productRepository: ProductRepository,
     ): GetAllProductsUseCase {
@@ -43,6 +44,7 @@ object ProductUseCases {
     }
 
     @Provides
+    @ViewModelScoped
     fun provideAddToCartUseCase(
         shoppingCartRepository: ShoppingCartRepository,
         productRepository: ProductRepository,
@@ -51,6 +53,7 @@ object ProductUseCases {
     }
 
     @Provides
+    @ViewModelScoped
     fun provideRemoveFromCartUseCase(
         shoppingCartRepository: ShoppingCartRepository,
         productRepository: ProductRepository,
@@ -59,6 +62,7 @@ object ProductUseCases {
     }
 
     @Provides
+    @ViewModelScoped
     fun provideAbandonCartUseCase(
         shoppingCartRepository: ShoppingCartRepository,
     ): AbandonCartUseCase {

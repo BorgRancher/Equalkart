@@ -6,10 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 
 @Composable
 fun BrowseProductsRoute(
-    coordinator: BrowseProductsCoordinator = rememberBrowseProductsCoordinator(),
+    navHostController: NavHostController,
+    coordinator: BrowseProductsCoordinator = rememberBrowseProductsCoordinator(
+        navController = navHostController,
+    ),
 ) {
     // State observing and declarations
     val uiState by coordinator.screenStateFlow.collectAsStateWithLifecycle(BrowseProductsState())

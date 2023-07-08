@@ -36,7 +36,7 @@ class BrowseProductsViewModel @Inject constructor(
 
         )
         val params = GetAllProductsUseCase.Params(
-            query = _stateFlow.value.searchQuery,
+            query = _stateFlow.value.searchQuery ?: "",
         )
         getAllProductsUseCase(params, onResult = { products -> onProductsLoaded(products) })
         readShoppingCartUseCase(Any(), onResult = { cart -> onCartUpdated(cart) })
